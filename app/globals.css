@@ -1,26 +1,253 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gold:        #C9A84C;
+  --gold-light:  #E5C76B;
+  --gold-dark:   #9A7B2E;
+  --bg:          #080808;
+  --bg-surface:  #111111;
+  --bg-card:     #161616;
+  --text:        #F5F5F0;
+  --text-muted:  #8A8A80;
+  --border:      #2A2A2A;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ─── Base ───────────────────────────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  direction: rtl;
+  background: var(--bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Heebo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
+
+/* ─── Typography ─────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: 'Heebo', sans-serif;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+/* ─── Gold Utilities ─────────────────────────────────────────── */
+.text-gold          { color: var(--gold); }
+.text-gold-light    { color: var(--gold-light); }
+.bg-gold            { background-color: var(--gold); }
+.border-gold        { border-color: var(--gold); }
+
+.gold-gradient {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 60%, var(--gold-light) 100%);
+}
+
+/* ─── Button Styles ───────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2.2rem;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  color: #0A0A0A;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.35);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2.2rem;
+  background: transparent;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-outline:hover {
+  background: rgba(201, 168, 76, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ─── Section Layout ──────────────────────────────────────────── */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-padding {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+/* ─── Gold Divider ────────────────────────────────────────────── */
+.gold-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+  margin: 1rem auto;
+}
+
+.gold-divider-right {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* ─── Card ────────────────────────────────────────────────────── */
+.card-dark {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-dark:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(201, 168, 76, 0.12);
+}
+
+/* ─── Section Label ───────────────────────────────────────────── */
+.section-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+/* ─── Keyframes ───────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50%       { transform: translateY(6px); opacity: 0.5; }
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 6px; }
+::-webkit-scrollbar-track        { background: var(--bg); }
+::-webkit-scrollbar-thumb        { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--gold-dark); }
+
+/* ─── Selection ───────────────────────────────────────────────── */
+::selection {
+  background: rgba(201, 168, 76, 0.3);
+  color: var(--text);
+}
+
+/* ─── Input Styles ────────────────────────────────────────────── */
+.input-dark {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.85rem 1.1rem;
+  color: var(--text);
+  font-family: 'Heebo', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  outline: none;
+  direction: rtl;
+}
+
+.input-dark::placeholder { color: var(--text-muted); }
+
+.input-dark:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+/* ─── Video Placeholder ───────────────────────────────────────── */
+.video-placeholder {
+  aspect-ratio: 16/9;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.video-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
+}
+
+.video-placeholder:hover { border-color: var(--gold); }

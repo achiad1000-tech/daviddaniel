@@ -120,18 +120,24 @@ h1, h2, h3, h4 {
 .section-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .section-container {
+    padding: 0 2rem;
+  }
 }
 
 .section-padding {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .section-padding {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    padding-top: 7rem;
+    padding-bottom: 7rem;
   }
 }
 
@@ -152,14 +158,13 @@ h1, h2, h3, h4 {
 .card-dark {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card-dark:hover {
-  border-color: var(--gold);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(201, 168, 76, 0.12);
+  border-color: rgba(201,168,76,0.5);
+  box-shadow: 0 16px 50px rgba(201, 168, 76, 0.1);
 }
 
 /* ─── Section Label ───────────────────────────────────────────── */

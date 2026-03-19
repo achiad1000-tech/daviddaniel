@@ -4,6 +4,7 @@ import AboutSection from "@/components/AboutSection";
 import ServicesSection from "@/components/ServicesSection";
 import VideoGallery from "@/components/VideoGallery";
 import Testimonials from "@/components/Testimonials";
+import FAQ from "@/components/FAQ";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
 
@@ -50,11 +51,11 @@ export default function Home() {
       <Navbar />
       <main>
         <HeroSection />
-        <StatsBar />
         <AboutSection />
         <ServicesSection />
         <VideoGallery />
         <Testimonials />
+        <FAQ />
         <ContactForm />
       </main>
       <Footer />

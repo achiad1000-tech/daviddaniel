@@ -1,17 +1,11 @@
 "use server";
 
-// Supabase-ready server action.
-// When you add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to .env.local,
-// uncomment the Supabase block below — no other changes needed.
-
-/*
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
-*/
 
 export type ContactState = {
   success: boolean;
@@ -27,13 +21,10 @@ export async function submitContact(
   const email   = (formData.get("email")   as string)?.trim();
   const message = (formData.get("message") as string)?.trim();
 
-  // ── Basic validation ──────────────────────────────────────────
   if (!name || !phone) {
     return { success: false, message: "נא למלא שם וטלפון." };
   }
 
-  // ── Supabase insert (uncomment when ready) ────────────────────
-  /*
   const { error } = await supabase.from("leads").insert([
     { name, phone, email, message },
   ]);
@@ -42,10 +33,6 @@ export async function submitContact(
     console.error("Supabase error:", error.message);
     return { success: false, message: "שגיאה בשליחה. נסה שוב." };
   }
-  */
-
-  // ── Placeholder success (remove when Supabase is active) ─────
-  console.log("New lead →", { name, phone, email, message });
 
   return {
     success: true,

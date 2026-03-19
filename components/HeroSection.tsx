@@ -1,163 +1,153 @@
 "use client";
 
-import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export default function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-
-  const scrollToContact = () => {
-    document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
-  };
-  const scrollToGallery = () => {
-    document.querySelector("#gallery")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
     <section
+      ref={ref}
       id="hero"
-      ref={containerRef}
-      className="relative min-h-[100svh] flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: "var(--bg)" }}
+      className="relative flex items-center overflow-hidden"
+      style={{ background: "var(--bg)", paddingTop: "150px", marginBottom: "4rem" }}
     >
-      {/* ── Cinematic background layers ── */}
-      {/* Deep vignette */}
+      {/* Background orbs */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 80% 70% at 60% 40%, rgba(201,168,76,0.07) 0%, transparent 65%)",
+          y: bgY,
+        }}
+      />
+      <motion.div
+        className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(201,168,76,0.09) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-1/3 w-[400px] h-[300px] pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(201,168,76,0.05) 0%, transparent 70%)",
+          filter: "blur(50px)",
+        }}
+        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(201,168,76,0.06) 0%, transparent 65%)",
-        }}
-      />
-      {/* Ambient top glow */}
-      <motion.div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%)",
-          filter: "blur(40px)",
-        }}
-        animate={{ scale: [1, 1.06, 1], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Subtle horizontal lines */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,168,76,0.5) 60px, rgba(201,168,76,0.5) 61px)",
-        }}
-      />
-      {/* Corner vignettes */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%)",
+          background: "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%)",
         }}
       />
 
-      {/* ── Parallax content ── */}
       <motion.div
-        style={{ y, opacity }}
-        className="relative z-10 flex flex-col items-center text-center px-6 pt-20"
+        style={{ opacity }}
+        className="section-container relative z-10 w-full py-14 md:py-24 lg:py-28"
       >
-        {/* Eyebrow label */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <span className="section-label tracking-[0.3em]">
-            ✦ &nbsp; מנטליסט &nbsp; · &nbsp; ישראל &nbsp; ✦
-          </span>
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-        {/* Main headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.4 }}
-          className="mt-4 text-[clamp(2.6rem,8vw,6rem)] font-black leading-[1.05] tracking-tight"
-        >
-          <span className="gold-gradient">אמן חושים</span>
-          <br />
-          <span className="text-[var(--text)]">דוד דניאל</span>
-        </motion.h1>
+          {/* ── Right: Text ── */}
+          <div className="order-1 flex flex-col gap-5 md:gap-6 text-right">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="section-label tracking-[0.3em]">
+                ✦ &nbsp; מנטליסט &nbsp; · &nbsp; ישראל &nbsp; ✦
+              </span>
+            </motion.div>
 
-        {/* Domain / Brand tag */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.65 }}
-          className="mt-3 font-[family-name:var(--font-playfair)] italic text-[var(--gold)] text-xl md:text-2xl tracking-widest opacity-80"
-        >
-          DavidDaniel.com
-        </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[clamp(2rem,6vw,4.5rem)] font-black leading-[1.08] tracking-tight"
+            >
+              מוכנים לחוויה של<br />
+              <motion.span
+                className="gold-gradient"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                טירוף חושים?
+              </motion.span>
+            </motion.h1>
 
-        {/* Sub-tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-5 max-w-md text-[var(--text-muted)] text-base md:text-lg leading-relaxed"
-        >
-          חוויה בלתי נשכחת של קריאת מחשבות, השפעה נסתרת ומסתורין אמיתי —
-          <br className="hidden md:block" />
-          לאירועים עסקיים, פרטיים ובמות.
-        </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[var(--text-muted)] text-base md:text-lg leading-relaxed max-w-lg"
+            >
+              דוד דניאל מביא לאירוע שלכם ישירות ממסך הטלוויזיה — אמן החושים שכולם מדברים עליו.
+              45 דקות של צחוק, הפתעה ורגעים שלא ישכחו לעולם.
+            </motion.p>
 
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="mt-8 flex flex-col sm:flex-row items-center gap-4"
-        >
-          <button onClick={scrollToContact} className="btn-primary text-base md:text-lg px-8 py-3.5">
-            הזמן הופעה
-          </button>
-          <button onClick={scrollToGallery} className="btn-outline text-base md:text-lg px-8 py-3.5">
-            צפה בסרטון
-          </button>
-        </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[var(--text-muted)] text-sm md:text-base leading-relaxed max-w-lg"
+            >
+              אם בדיוק חיפשתם מופע אנרגטי שמהפנט את כל הקהל —
+              אתם במקום הנכון.
+            </motion.p>
 
-        {/* Trust badges */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.3 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-6 text-[var(--text-muted)] text-sm"
-        >
-          {["500+ הופעות", "חברות Fortune 500", "ביקורות ★★★★★"].map((badge) => (
-            <span key={badge} className="flex items-center gap-2">
-              <span className="text-[var(--gold)] text-xs">◆</span>
-              {badge}
-            </span>
-          ))}
-        </motion.div>
-      </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.85, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <motion.a
+                href="#contact"
+                className="btn-primary inline-flex"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              >
+                להזמין את דוד
+              </motion.a>
+            </motion.div>
+          </div>
 
-      {/* ── Scroll indicator ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
-        onClick={() => document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" })}
-      >
-        <span className="text-[var(--text-muted)] text-xs tracking-widest uppercase">גלול למטה</span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="w-5 h-8 border border-[var(--gold)] rounded-full flex items-start justify-center pt-1.5 opacity-60"
-        >
-          <div className="w-1 h-1.5 bg-[var(--gold)] rounded-full" />
-        </motion.div>
+          {/* ── Left: Video ── */}
+          <motion.div
+            initial={{ opacity: 0, x: -30, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="order-2 flex flex-col gap-4"
+          >
+            <motion.div
+              className="relative rounded-xl overflow-hidden shadow-2xl"
+              whileHover={{ scale: 1.01 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              style={{
+                border: "1px solid rgba(201,168,76,0.25)",
+                boxShadow: "0 0 60px rgba(201,168,76,0.1), 0 20px 60px rgba(0,0,0,0.5)",
+              }}
+            >
+              <video
+                src="/david-showreel.mp4"
+                controls
+                playsInline
+                className="w-full block"
+                style={{ aspectRatio: "16/9", background: "#000" }}
+              />
+            </motion.div>
+          </motion.div>
+
+        </div>
       </motion.div>
     </section>
   );

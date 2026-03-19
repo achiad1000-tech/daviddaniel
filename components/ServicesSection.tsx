@@ -1,62 +1,50 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 
 const services = [
   {
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <rect x="2" y="7" width="20" height="14" rx="2" />
-        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-        <line x1="12" y1="12" x2="12" y2="16" />
-        <line x1="10" y1="14" x2="14" y2="14" />
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+        <line x1="9" y1="9" x2="9.01" y2="9" strokeWidth="2" strokeLinecap="round" />
+        <line x1="15" y1="9" x2="15.01" y2="9" strokeWidth="2" strokeLinecap="round" />
+        <path d="M12 2v2M6.5 3.5l1.5 1.5M17.5 3.5l-1.5 1.5" />
       </svg>
     ),
-    title: "אירועים עסקיים",
-    subtitle: "Corporate Events",
+    title: "ימי הולדת",
+    subtitle: "Birthday Events",
     description:
-      "הגדל את מעורבות העובדים ושאיר רושם בלתי נמחק על לקוחות ושותפים עסקיים. הופעה שמשלבת בידור, מחשבה ורגע של פליאה — שכולם ידברו עליה .",
-    highlights: ["השקות מוצר", "ועידות חברה", "ערבי גיבוש", "אירועי סיום שנה"],
+      "הפוך את יום ההולדת לחוויה שתיזכר לכל החיים. דוד יוצר רגעים של פליאה, צחוק והפתעה שהופכים כל מסיבה לאגדית — עם רגע אישי ומיוחד לבעל/ת השמחה.",
   },
   {
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
     ),
-    title: "אירועים פרטיים",
-    subtitle: "Private Events",
+    title: "ימי חברה / גיבוש",
+    subtitle: "Corporate & Team Events",
     description:
-      "הפוך את האירוע שלך לחוויה שתיזכר לנצח. מסיבות יום הולדת, מסיבות רווקות, ומפגשים משפחתיים — דוד מביא רגע של קסם שמחבר ומאחד.",
-    highlights: ["חתונות ואירוסין", "ימי הולדת VIP", "מסיבות רווקות", "אירועים משפחתיים"],
+      "מופע שמחבר בין אנשים, שובר קרח ויוצר אנרגיה שמתרגמת לעבודת צוות אמיתית. דוד ישאיר את הצוות שלך עם חיוך, זיכרונות משותפים ותחושת \"אנחנו\".",
   },
   {
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <path d="M9 12l2 2 4-4" />
       </svg>
     ),
-    title: "הופעות בימה",
-    subtitle: "Stage Performances",
+    title: "בר / בת מצווה",
+    subtitle: "Bar & Bat Mitzvah",
     description:
-      "הופעת בימה מלאה — ניסיון מרהיב עבור קהל גדול. מופע מקצועי ומותאם אישית שמלהיב, מפליא ומשאיר את הקהל רוצה עוד.",
-    highlights: ["תיאטראות ואולמות", "פסטיבלים", "מופעי פתיחה", "ערבי גאלה"],
+      "אירוע הבר/בת מצווה הוא אירוע של פעם בחיים — מופע שמשלב קריאת מחשבות, הפתעות ורגעים שיגרמו לכל המשפחה לדבר עליהם שנים קדימה.",
   },
 ];
-
-const containerVariants: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.0, 0.0, 0.2, 1] },
-  },
-};
 
 export default function ServicesSection() {
   return (
@@ -71,8 +59,8 @@ export default function ServicesSection() {
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="section-label"
           >
             מה אני מציע
@@ -80,8 +68,8 @@ export default function ServicesSection() {
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="mt-2 text-3xl md:text-4xl lg:text-5xl font-black"
           >
             הופעות לכל{" "}
@@ -91,8 +79,8 @@ export default function ServicesSection() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="mt-4 text-[var(--text-muted)] max-w-xl mx-auto text-base md:text-lg"
           >
             כל הופעה מותאמת אישית לאופי ולמטרות האירוע שלך.
@@ -100,30 +88,32 @@ export default function ServicesSection() {
         </div>
 
         {/* Cards */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
-        >
-          {services.map((service) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {services.map((service, i) => (
             <motion.div
               key={service.title}
-              variants={cardVariants}
-              className="card-dark p-7 flex flex-col gap-5 group"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.1 }}
+              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="card-dark p-7 flex flex-col gap-5 group cursor-default"
+              style={{ transition: "box-shadow 0.3s" }}
             >
               {/* Icon */}
-              <div
-                className="w-14 h-14 rounded-lg flex items-center justify-center transition-colors duration-300"
+              <motion.div
+                className="w-14 h-14 rounded-lg flex items-center justify-center"
                 style={{
                   background: "rgba(201,168,76,0.06)",
                   border: "1px solid rgba(201,168,76,0.2)",
                   color: "var(--gold)",
                 }}
+                whileHover={{ background: "rgba(201,168,76,0.12)", scale: 1.05 }}
+                transition={{ duration: 0.2 }}
               >
                 {service.icon}
-              </div>
+              </motion.div>
 
               {/* Titles */}
               <div>
@@ -137,28 +127,9 @@ export default function ServicesSection() {
               <p className="text-[var(--text-muted)] text-sm leading-relaxed flex-1">
                 {service.description}
               </p>
-
-              {/* Highlights */}
-              <ul className="flex flex-col gap-1.5">
-                {service.highlights.map((h) => (
-                  <li key={h} className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                    <span className="text-[var(--gold)] text-xs">◆</span>
-                    {h}
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <a
-                href="#contact"
-                className="mt-2 text-sm font-semibold text-[var(--gold)] flex items-center gap-1.5 group-hover:gap-3 transition-all duration-200"
-              >
-                לפרטים ותאום
-                <span className="text-lg leading-none">←</span>
-              </a>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

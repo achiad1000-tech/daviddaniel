@@ -12,7 +12,7 @@ const testimonials = [
   },
   {
     name: "אלון שמיר",
-    role: "מנכ\"ל, NovaTech",
+    role: 'מנכ"ל, NovaTech',
     rating: 5,
     text: "הזמנו את דוד להשקת המוצר שלנו ולקוחות פשוט איבדו את עשתונותיהם. החוויה יצרה שיחה שהמשיכה הרבה אחרי הערב — ממש פנטסטי.",
     initial: "א",
@@ -26,7 +26,7 @@ const testimonials = [
   },
   {
     name: "דני פרידמן",
-    role: "יו\"ר ועד אירועי, Elbit Systems",
+    role: 'יו"ר ועד אירועי, Elbit Systems',
     rating: 5,
     text: "ניסינו בעבר הופעות בידור שונות לכנס השנתי שלנו. דוד היה ברמה אחרת לחלוטין. מקצועי, מרתק, ומדויק. ניפגש עוד שנה.",
     initial: "ד",
@@ -36,15 +36,19 @@ const testimonials = [
 const Stars = ({ count }: { count: number }) => (
   <div className="flex gap-0.5">
     {Array.from({ length: count }).map((_, i) => (
-      <svg
+      <motion.svg
         key={i}
         width="14"
         height="14"
         viewBox="0 0 24 24"
         fill="var(--gold)"
+        initial={{ opacity: 0, scale: 0 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: false }}
+        transition={{ delay: i * 0.06, type: "spring", stiffness: 400, damping: 15 }}
       >
         <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-      </svg>
+      </motion.svg>
     ))}
   </div>
 );
@@ -62,8 +66,8 @@ export default function Testimonials() {
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="section-label"
           >
             מה אומרים עלי
@@ -71,8 +75,8 @@ export default function Testimonials() {
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="mt-2 text-3xl md:text-4xl lg:text-5xl font-black"
           >
             הקהל <span className="gold-gradient">מדבר</span>
@@ -81,26 +85,21 @@ export default function Testimonials() {
         </div>
 
         {/* Cards Grid */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6"
-        >
-          {testimonials.map((t) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
+          {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-              }}
-              className="card-dark p-7 flex flex-col gap-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.1 }}
+              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -6, scale: 1.01 }}
+              className="card-dark p-7 flex flex-col gap-4 cursor-default"
             >
               {/* Quote mark */}
               <div
-                className="font-[family-name:var(--font-playfair)] text-6xl leading-none"
-                style={{ color: "rgba(201,168,76,0.25)", lineHeight: "0.8" }}
+                className="text-6xl leading-none select-none"
+                style={{ color: "rgba(201,168,76,0.25)", lineHeight: "0.8", fontFamily: "Georgia, serif" }}
               >
                 &#8220;
               </div>
@@ -131,7 +130,7 @@ export default function Testimonials() {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

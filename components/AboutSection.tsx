@@ -1,14 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: (i = 0) => ({
+  visible: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.15, ease: "easeOut" },
+    transition: {
+      duration: 0.7,
+      delay: i * 0.15,
+      ease: "easeOut",
+    },
   }),
 };
 
@@ -20,6 +24,7 @@ export default function AboutSection() {
           {/* ── Image / Visual side ── */}
           <motion.div
             variants={fadeUp}
+            custom={0}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.3 }}

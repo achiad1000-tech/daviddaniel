@@ -17,35 +17,15 @@ import LandingSection from "@/components/LandingSection";
 export default function Home() {
   const [introPlaying, setIntroPlaying] = useState(true);
   const [heroFixed, setHeroFixed] = useState(false);
-  const landingEndFired = useRef(false);
-  const heroNaturalTop = useRef(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Store hero's natural offsetTop before it ever becomes fixed
-    const hero = document.getElementById("hero");
-    if (hero) heroNaturalTop.current = hero.offsetTop;
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = introPlaying ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [introPlaying]);
-
-  function handleRevealChange(reveal: boolean) {
-    setHeroFixed(reveal);
-    if (!reveal) {
-      landingEndFired.current = false;
-    }
-  }
-
-  function handleLandingEnd() {
-    if (landingEndFired.current) return;
-    landingEndFired.current = true;
-    // Use pre-stored natural offsetTop — hero.offsetTop is 0 when position:fixed
-    window.scrollTo({ top: heroNaturalTop.current, behavior: "instant" });
-    setHeroFixed(false);
-  }
 
   return (
     <>
@@ -58,18 +38,18 @@ export default function Home() {
       <main>
         <LandingSection
           introPlaying={introPlaying}
-          onRevealChange={handleRevealChange}
-          onLandingEnd={handleLandingEnd}
+          onRevealChange={setHeroFixed}
         />
         <HeroSection fixed={heroFixed} />
-        <AboutSection />
-        <ServicesSection />
-        <VideoGallery />
-        <Testimonials />
-        <FAQ />
-        <ContactForm />
+        {/* Temporarily hidden — not deleted */}
+        {/* <AboutSection /> */}
+        {/* <ServicesSection /> */}
+        {/* <VideoGallery /> */}
+        {/* <Testimonials /> */}
+        {/* <FAQ /> */}
+        {/* <ContactForm /> */}
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

@@ -473,22 +473,23 @@ function SweepCard({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
   // clipPath reveals the card as it rises (simulates card coming out of box opening)
   const clipPath = useTransform(y, v => `inset(0px 0px ${Math.max(0, H + v)}px 0px)`);
 
-  // fade in when rising starts, fade out at very end
-  const opacity = useTransform(scrollYProgress, [0.23, 0.27, 0.82, 0.85], [0, 1, 1, 0]);
+  // fade in when rising starts — no fade out, card exits off-screen
+  const opacity = useTransform(scrollYProgress, [0.23, 0.27], [0, 1]);
 
   // Phase 3 [0.57→0.62]: dart left
   // Phase 4 [0.62→0.74]: sweep right while growing large
+  // After 0.74: continues right, fully exits the page
   const x = useTransform(scrollYProgress,
-    [0.57,  0.62,     0.62,     0.74,   0.82,  0.85],
-    ["0vw", "-63vw",  "-63vw",  "73vw", "0vw", "0vw"]
+    [0.57, 0.62, 0.62, 0.74, 0.82],
+    ["0vw", "-63vw", "-63vw", "73vw", "120vw"]
   );
 
   const scale = useTransform(scrollYProgress,
-    [0.57, 0.63, 0.69, 0.74, 0.82],
-    [1,    1,    4.2,  4.2,  0.05]
+    [0.57, 0.63, 0.69, 0.74],
+    [1,    1,    4.2,  4.2]
   );
 
-  const rotate = useTransform(scrollYProgress, [0.62, 0.70, 0.74, 0.85], [0, -3, 0, 0]);
+  const rotate = useTransform(scrollYProgress, [0.62, 0.70, 0.74], [0, -3, 0]);
 
   return (
     <motion.div style={{
@@ -561,49 +562,37 @@ function CardBox3D({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
 export default function LandingSection({
   introPlaying = false,
   onRevealChange,
-  onLandingEnd,
 }: {
   introPlaying?: boolean;
   onRevealChange?: (v: boolean) => void;
-  onLandingEnd?: () => void;
 }) {
   const [textVisible, setTextVisible] = useState(false);
   const outerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: rawProgress } = useScroll({
     target: outerRef,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
   const scrollYProgress = useSpring(rawProgress, { stiffness: 130, damping: 22, mass: 0.4 });
 
   // Box drops off screen after card is fully risen
   const sceneY = useTransform(scrollYProgress, [0.40, 0.52], [0, 620]);
 
-  // Wipe overlay — dark bg that clips left→right as card sweeps
-  // Sticky section wipes from left→right during card sweep — no separate overlay needed
+  // Sticky section wipes from left→right during card sweep
   const stickyClipLeft = useTransform(scrollYProgress, [0.62, 0.74], ["0%", "110%"]);
   const stickyClipPath = useTransform(stickyClipLeft, c => `inset(0 0 0 ${c})`);
 
-  // Fire reveal/unreveal and landing-end callbacks
+  // HeroSection fixed during [0.58, ~end of section], then unfixes seamlessly
   const prevReveal = useRef(false);
-  const landingEndFired = useRef(false);
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Fix HeroSection just before sweep (0.58) so it's ready behind the section
-    const reveal = latest >= 0.58;
+  useMotionValueEvent(rawProgress, "change", (latest) => {
+    const reveal = latest >= 0.58 && latest < 0.998;
     if (reveal !== prevReveal.current) {
       prevReveal.current = reveal;
       onRevealChange?.(reveal);
     }
-    if (!reveal) {
-      landingEndFired.current = false;
-    }
-    if (latest >= 0.82 && !landingEndFired.current) {
-      landingEndFired.current = true;
-      onLandingEnd?.();
-    }
   });
 
   return (
-    <div ref={outerRef} style={{ height: "520vh", position: "relative" }}>
+    <div ref={outerRef} style={{ height: "420vh", position: "relative" }}>
     <motion.section style={{
       height: "100vh",
       position: "sticky",

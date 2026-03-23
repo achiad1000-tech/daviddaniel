@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-export default function HeroSection() {
+export default function HeroSection({ fixed = false }: { fixed?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
@@ -13,8 +13,14 @@ export default function HeroSection() {
     <section
       ref={ref}
       id="hero"
-      className="relative flex items-center overflow-hidden"
-      style={{ background: "var(--bg)", paddingTop: "150px", marginBottom: "4rem" }}
+      className={`${fixed ? "" : "relative"} flex items-center overflow-hidden`}
+      style={{
+        background: "var(--bg)",
+        paddingTop: "150px",
+        ...(fixed
+          ? { position: "fixed", inset: 0, zIndex: 10 }
+          : { marginBottom: "4rem" }),
+      }}
     >
       {/* Background orbs */}
       <motion.div

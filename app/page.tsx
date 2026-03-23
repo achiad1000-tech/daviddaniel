@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import IntroScreen from "@/components/IntroScreen";
 import Navbar from "@/components/Navbar";
@@ -13,19 +13,39 @@ import FAQ from "@/components/FAQ";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
 import LandingSection from "@/components/LandingSection";
-import AceCardReveal from "@/components/AceCardReveal";
 
 export default function Home() {
   const [introPlaying, setIntroPlaying] = useState(true);
+  const [heroFixed, setHeroFixed] = useState(false);
+  const landingEndFired = useRef(false);
+  const heroNaturalTop = useRef(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Store hero's natural offsetTop before it ever becomes fixed
+    const hero = document.getElementById("hero");
+    if (hero) heroNaturalTop.current = hero.offsetTop;
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = introPlaying ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [introPlaying]);
+
+  function handleRevealChange(reveal: boolean) {
+    setHeroFixed(reveal);
+    if (!reveal) {
+      landingEndFired.current = false;
+    }
+  }
+
+  function handleLandingEnd() {
+    if (landingEndFired.current) return;
+    landingEndFired.current = true;
+    // Use pre-stored natural offsetTop — hero.offsetTop is 0 when position:fixed
+    window.scrollTo({ top: heroNaturalTop.current, behavior: "instant" });
+    setHeroFixed(false);
+  }
 
   return (
     <>
@@ -35,10 +55,13 @@ export default function Home() {
         )}
       </AnimatePresence>
       <Navbar introPlaying={introPlaying} />
-      {!introPlaying && <AceCardReveal />}
       <main>
-        <LandingSection introPlaying={introPlaying} />
-        <HeroSection />
+        <LandingSection
+          introPlaying={introPlaying}
+          onRevealChange={handleRevealChange}
+          onLandingEnd={handleLandingEnd}
+        />
+        <HeroSection fixed={heroFixed} />
         <AboutSection />
         <ServicesSection />
         <VideoGallery />

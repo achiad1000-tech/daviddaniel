@@ -507,6 +507,30 @@ function SweepCard({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
   );
 }
 
+/* ─── Settled Ace — slides in from right after sweep exits ───── */
+function SettledAce({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+  // appears after sweep card exits (~0.75), slides in from off-screen right
+  const x = useTransform(scrollYProgress, [0.74, 0.82], [200, 0]);
+  const aceOpacity = useTransform(scrollYProgress, [0.74, 0.75], [0, 1]);
+
+  return (
+    <motion.div style={{
+      position: "fixed",
+      bottom: 40,
+      right: 180,
+      x,
+      opacity: aceOpacity,
+      zIndex: 9999,
+      pointerEvents: "none",
+      width: W,
+      height: H,
+      filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))",
+    }}>
+      <AceFace />
+    </motion.div>
+  );
+}
+
 /* ─── CardBox3D ──────────────────────────────────────────────── */
 function CardBox3D({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
   const innerRef = useRef<HTMLDivElement>(null);
@@ -694,6 +718,7 @@ export default function LandingSection({
       </div>
     </motion.section>
     <SweepCard scrollYProgress={scrollYProgress} />
+    <SettledAce scrollYProgress={scrollYProgress} />
     </div>
   );
 }

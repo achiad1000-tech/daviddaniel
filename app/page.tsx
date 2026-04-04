@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import IntroScreen from "@/components/IntroScreen";
 import Navbar from "@/components/Navbar";
@@ -16,7 +16,6 @@ import LandingSection from "@/components/LandingSection";
 
 export default function Home() {
   const [introPlaying, setIntroPlaying] = useState(true);
-  const [heroFixed, setHeroFixed] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -36,20 +35,17 @@ export default function Home() {
       </AnimatePresence>
       <Navbar introPlaying={introPlaying} />
       <main>
-        <LandingSection
-          introPlaying={introPlaying}
-          onRevealChange={setHeroFixed}
-        />
-        <HeroSection fixed={heroFixed} />
-        {/* Temporarily hidden — not deleted */}
-        {/* <AboutSection /> */}
-        {/* <ServicesSection /> */}
-        {/* <VideoGallery /> */}
-        {/* <Testimonials /> */}
-        {/* <FAQ /> */}
-        {/* <ContactForm /> */}
+        <LandingSection introPlaying={introPlaying}>
+          <HeroSection />
+        </LandingSection>
+        <AboutSection />
+        <ServicesSection />
+        <VideoGallery />
+        <Testimonials />
+        <FAQ />
+        <ContactForm />
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

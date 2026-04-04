@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const services = [
   {
@@ -46,88 +47,146 @@ const services = [
   },
 ];
 
+/* ── Char reveal — each character slides up individually ────── */
+function CharReveal({
+  text,
+  className,
+  progress,
+  startAt = 0,
+  endAt = 1,
+}: {
+  text: string;
+  className?: string;
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  startAt?: number;
+  endAt?: number;
+}) {
+  const chars = text.split("");
+  return (
+    <span className={className} style={{ display: "inline-block" }}>
+      {chars.map((char, i) => {
+        const charStart = startAt + (i / chars.length) * (endAt - startAt);
+        const charEnd = startAt + ((i + 1) / chars.length) * (endAt - startAt);
+        return <SingleChar key={i} char={char} range={[charStart, charEnd]} progress={progress} />;
+      })}
+    </span>
+  );
+}
+
+function SingleChar({
+  char,
+  range,
+  progress,
+}: {
+  char: string;
+  range: [number, number];
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+}) {
+  const y = useTransform(progress, range, [40, 0]);
+  const opacity = useTransform(progress, range, [0, 1]);
+  return (
+    <motion.span
+      style={{ y, opacity, display: "inline-block", whiteSpace: "pre" }}
+    >
+      {char}
+    </motion.span>
+  );
+}
+
+function ServiceCard({ service }: { service: (typeof services)[0] }) {
+  return (
+    <div className="card-dark p-7 flex flex-col gap-5 w-full h-full">
+      <div
+        className="w-14 h-14 rounded-lg flex items-center justify-center"
+        style={{
+          background: "rgba(201,168,76,0.06)",
+          border: "1px solid rgba(201,168,76,0.2)",
+          color: "var(--gold)",
+        }}
+      >
+        {service.icon}
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-[var(--text)]">{service.title}</h3>
+        <p className="text-xs text-[var(--gold)] tracking-widest uppercase mt-0.5">
+          {service.subtitle}
+        </p>
+      </div>
+      <p className="text-[var(--text-muted)] text-sm leading-relaxed flex-1">
+        {service.description}
+      </p>
+    </div>
+  );
+}
+
 export default function ServicesSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: sectionProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 85%", "start 20%"],
+  });
+
+  // Cards spread — synced with section scroll
+  const left0 = useTransform(sectionProgress, [0.3, 0.7], ["50%", "17%"]);
+  const left1 = useTransform(sectionProgress, [0.3, 0.7], ["50%", "50%"]);
+  const left2 = useTransform(sectionProgress, [0.3, 0.7], ["50%", "83%"]);
+  const lefts = [left0, left1, left2];
+
+  const rotate0 = useTransform(sectionProgress, [0.3, 0.7], [-4, 0]);
+  const rotate2 = useTransform(sectionProgress, [0.3, 0.7], [4, 0]);
+  const rotates = [rotate0, undefined, rotate2];
+
   return (
     <section
+      ref={sectionRef}
       id="services"
       className="section-padding"
-      style={{ background: "var(--bg-surface)" }}
+      style={{ background: "var(--bg-surface)", overflow: "hidden" }}
     >
       <div className="section-container">
-        {/* Header */}
+        {/* Header — chars reveal synced with cards */}
         <div className="text-center mb-14">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="section-label"
-          >
-            מה אני מציע
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-2 text-3xl md:text-4xl lg:text-5xl font-black"
-          >
-            הופעות לכל{" "}
-            <span className="gold-gradient">אירוע</span>
-          </motion.h2>
+          <div><CharReveal text="מה אני מציע" className="section-label" progress={sectionProgress} startAt={0} endAt={0.2} /></div>
+          <h2 className="mt-2 text-3xl md:text-4xl lg:text-5xl font-black">
+            <CharReveal text="הופעות לכל " progress={sectionProgress} startAt={0.05} endAt={0.3} />
+            <CharReveal text="אירוע" className="gold-gradient" progress={sectionProgress} startAt={0.15} endAt={0.35} />
+          </h2>
           <div className="gold-divider mt-4" />
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 text-[var(--text-muted)] max-w-xl mx-auto text-base md:text-lg"
-          >
-            כל הופעה מותאמת אישית לאופי ולמטרות האירוע שלך.
-          </motion.p>
+          <div className="mt-4">
+            <CharReveal text="כל הופעה מותאמת אישית לאופי ולמטרות האירוע שלך." className="text-[var(--text-muted)] max-w-xl mx-auto text-base md:text-lg" progress={sectionProgress} startAt={0.15} endAt={0.4} />
+          </div>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {/* Cards — all stacked at center, fan out on scroll */}
+        <div
+          className="relative hidden md:block"
+          style={{ height: 380 }}
+        >
           {services.map((service, i) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.1 }}
-              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="card-dark p-7 flex flex-col gap-5 group cursor-default"
-              style={{ transition: "box-shadow 0.3s" }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: lefts[i],
+                x: "-50%",
+                width: "min(30%, 360px)",
+                height: "100%",
+                rotate: rotates[i],
+                zIndex: i === 1 ? 3 : i === 0 ? 2 : 1,
+              }}
             >
-              {/* Icon */}
-              <motion.div
-                className="w-14 h-14 rounded-lg flex items-center justify-center"
-                style={{
-                  background: "rgba(201,168,76,0.06)",
-                  border: "1px solid rgba(201,168,76,0.2)",
-                  color: "var(--gold)",
-                }}
-                whileHover={{ background: "rgba(201,168,76,0.12)", scale: 1.05 }}
-                transition={{ duration: 0.2 }}
-              >
-                {service.icon}
-              </motion.div>
-
-              {/* Titles */}
-              <div>
-                <h3 className="text-xl font-bold text-[var(--text)]">{service.title}</h3>
-                <p className="text-xs text-[var(--gold)] tracking-widest uppercase mt-0.5">
-                  {service.subtitle}
-                </p>
-              </div>
-
-              {/* Description */}
-              <p className="text-[var(--text-muted)] text-sm leading-relaxed flex-1">
-                {service.description}
-              </p>
+              <ServiceCard service={service} />
             </motion.div>
+          ))}
+        </div>
+
+        {/* Mobile — normal stack */}
+        <div className="flex flex-col gap-6 md:hidden">
+          {services.map((service) => (
+            <div key={service.title}>
+              <ServiceCard service={service} />
+            </div>
           ))}
         </div>
       </div>

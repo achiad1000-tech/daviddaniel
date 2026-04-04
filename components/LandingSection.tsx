@@ -465,36 +465,34 @@ const BASE_RY = 0;
 
 /* ─── Sweep Card — single element handles both rise from box AND sweep ── */
 function SweepCard({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
-  const RISE = H + 70; // 290px — how far above the box the card rises
+  const [active, setActive] = useState(false);
+  const sweepSeenStart = useRef(false);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    if (v < 0.1) sweepSeenStart.current = true;
+    if (v >= 0.2 && v < 0.85 && sweepSeenStart.current && !active) setActive(true);
+    if ((v < 0.1 || v >= 0.85) && active) setActive(false);
+  });
 
-  // Phase 1 [0.25→0.40]: rise out of the box (starts immediately after box opens)
+  const RISE = H + 70;
   const y = useTransform(scrollYProgress, [0.25, 0.40], [0, -RISE]);
-
-  // clipPath reveals the card as it rises (simulates card coming out of box opening)
   const clipPath = useTransform(y, v => `inset(0px 0px ${Math.max(0, H + v)}px 0px)`);
-
-  // fade in when rising starts — no fade out, card exits off-screen
   const opacity = useTransform(scrollYProgress, [0.23, 0.27], [0, 1]);
-
-  // Phase 3 [0.57→0.62]: dart left
-  // Phase 4 [0.62→0.74]: sweep right while growing large
-  // After 0.74: continues right, fully exits the page
   const x = useTransform(scrollYProgress,
     [0.57, 0.62, 0.62, 0.74, 0.82],
     ["0vw", "-63vw", "-63vw", "73vw", "120vw"]
   );
-
   const scale = useTransform(scrollYProgress,
     [0.57, 0.63, 0.69, 0.74],
     [1,    1,    4.2,  4.2]
   );
-
   const rotate = useTransform(scrollYProgress, [0.62, 0.70, 0.74], [0, -3, 0]);
+
+  if (!active) return null;
 
   return (
     <motion.div style={{
       position: "fixed",
-      bottom: 40, // aligned with box bottom
+      bottom: 40,
       left: `calc(50% - ${W / 2}px)`,
       y, x, scale, rotate, opacity, clipPath,
       zIndex: 200,
@@ -507,26 +505,145 @@ function SweepCard({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
   );
 }
 
-/* ─── Settled Ace — slides in from right after sweep exits ───── */
-function SettledAce({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
-  // appears after sweep card exits (~0.75), slides in from off-screen right
+/* ─── Card faces for the spinning card ──────────────────────── */
+const CARD_FACES = [
+  { value: "A", suit: "♠", color: "#111" },
+  { value: "K", suit: "♥", color: "#b91c1c" },
+  { value: "Q", suit: "♦", color: "#b91c1c" },
+  { value: "J", suit: "♣", color: "#111" },
+  { value: "10", suit: "♠", color: "#111" },
+  { value: "7", suit: "♥", color: "#b91c1c" },
+  { value: "3", suit: "♦", color: "#b91c1c" },
+  { value: "9", suit: "♣", color: "#111" },
+];
+
+function CardFace({ value, suit, color }: { value: string; suit: string; color: string }) {
+  return (
+    <div style={{
+      width: W, height: H,
+      borderRadius: 10,
+      background: `linear-gradient(170deg, ${IVORY_L} 0%, ${IVORY} 55%, ${IVORY_D} 100%)`,
+      border: `1.5px solid ${GOLD_D}`,
+      position: "absolute", inset: 0, overflow: "hidden",
+      backfaceVisibility: "hidden",
+    }}>
+      <div style={{
+        position: "absolute", inset: 0, borderRadius: "inherit",
+        background: "linear-gradient(145deg, rgba(255,255,255,0.52) 0%, transparent 45%)",
+        pointerEvents: "none",
+      }} />
+      <div style={{ position: "absolute", inset: 7, border: `1.5px solid ${GOLD}`, borderRadius: 5 }} />
+      <div style={{ position: "absolute", inset: 12, border: `0.5px solid rgba(201,168,76,0.4)`, borderRadius: 3 }} />
+      <div style={{
+        position: "absolute", top: 10, left: 12,
+        fontFamily: "Georgia, serif", lineHeight: 1, textAlign: "center", color,
+        userSelect: "none",
+      }}>
+        <div style={{ fontSize: value.length > 1 ? 18 : 22, fontWeight: 900 }}>{value}</div>
+        <div style={{ fontSize: 15, marginTop: 1 }}>{suit}</div>
+      </div>
+      <div style={{
+        position: "absolute", bottom: 10, right: 12,
+        fontFamily: "Georgia, serif", lineHeight: 1, textAlign: "center",
+        transform: "rotate(180deg)", color, userSelect: "none",
+      }}>
+        <div style={{ fontSize: value.length > 1 ? 18 : 22, fontWeight: 900 }}>{value}</div>
+        <div style={{ fontSize: 15, marginTop: 1 }}>{suit}</div>
+      </div>
+      <div style={{
+        position: "absolute", top: "47%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        fontSize: 90, lineHeight: 1, color,
+        textShadow: `0 2px 0 rgba(0,0,0,0.1), 0 0 18px rgba(201,168,76,0.18)`,
+        userSelect: "none",
+      }}>{suit}</div>
+    </div>
+  );
+}
+
+/* ─── Settled Card — spins & changes face on scroll ────────── */
+function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgress: MotionValue<number>; hideSmallCard?: boolean }) {
   const x = useTransform(scrollYProgress, [0.74, 0.82], [200, 0]);
   const aceOpacity = useTransform(scrollYProgress, [0.74, 0.75], [0, 1]);
+
+  const [visible, setVisible] = useState(false);
+  const hasSeenStart = useRef(false);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    // Must see progress < 0.3 first (animation actually played from start)
+    if (v < 0.3) hasSeenStart.current = true;
+    if (v >= 0.74 && hasSeenStart.current && !visible) setVisible(true);
+  });
+
+  // Use window scroll for spin after landing animation
+  const { scrollY } = useScroll();
+  const [cardIndex, setCardIndex] = useState(0);
+
+  const rotateY = useTransform(scrollY, (v) => (v / 500) * 360);
+
+  const prevHalf = useRef(0);
+  useMotionValueEvent(scrollY, "change", (v) => {
+    if (!visible) return;
+    const currentHalf = Math.floor((v / 500) * 2);
+    if (currentHalf !== prevHalf.current && currentHalf > 0) {
+      prevHalf.current = currentHalf;
+      setCardIndex(currentHalf % CARD_FACES.length);
+    }
+  });
+
+  const face = CARD_FACES[cardIndex];
+
+  if (!visible || hideSmallCard) return null;
 
   return (
     <motion.div style={{
       position: "fixed",
       bottom: 40,
-      right: 180,
+      right: 24,
       x,
       opacity: aceOpacity,
       zIndex: 9999,
       pointerEvents: "none",
       width: W,
       height: H,
+      perspective: 600,
       filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))",
     }}>
-      <AceFace />
+      <motion.div style={{
+        width: W, height: H,
+        position: "relative",
+        transformStyle: "preserve-3d",
+        rotateY,
+      }}>
+        <CardFace value={face.value} suit={face.suit} color={face.color} />
+        {/* Back face */}
+        <div style={{
+          position: "absolute", inset: 0,
+          width: W, height: H,
+          borderRadius: 10,
+          background: `linear-gradient(135deg, ${GOLD_D}, ${GOLD}, ${GOLD_L})`,
+          border: `1.5px solid ${GOLD_D}`,
+          backfaceVisibility: "hidden",
+          transform: "rotateY(180deg)",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            position: "absolute", inset: 8,
+            borderRadius: 6,
+            border: `1px solid rgba(255,255,255,0.3)`,
+            backgroundImage: `
+              repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 8px),
+              repeating-linear-gradient(-45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 8px)
+            `,
+          }} />
+          <div style={{
+            position: "absolute", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontFamily: "Georgia, serif", fontStyle: "italic", fontWeight: 700,
+            fontSize: 14, color: "rgba(255,255,255,0.7)",
+            letterSpacing: "0.04em", whiteSpace: "nowrap",
+          }}>David Daniel</div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -585,10 +702,12 @@ function CardBox3D({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
 /* ─── LandingSection ─────────────────────────────────────────── */
 export default function LandingSection({
   introPlaying = false,
-  onRevealChange,
+  children,
+  hideSmallCard = false,
 }: {
   introPlaying?: boolean;
-  onRevealChange?: (v: boolean) => void;
+  children?: React.ReactNode;
+  hideSmallCard?: boolean;
 }) {
   const [textVisible, setTextVisible] = useState(false);
   const outerRef = useRef<HTMLDivElement>(null);
@@ -596,27 +715,23 @@ export default function LandingSection({
     target: outerRef,
     offset: ["start start", "end start"],
   });
-  const scrollYProgress = useSpring(rawProgress, { stiffness: 130, damping: 22, mass: 0.4 });
+  // Remap so animations (0→0.82) fill ~78% of scroll, hero unsticks right as they end
+  const remapped = useTransform(rawProgress, [0, 0.778, 1], [0, 0.82, 1]);
+  const scrollYProgress = useSpring(remapped, { stiffness: 130, damping: 22, mass: 0.4 });
 
   // Box drops off screen after card is fully risen
   const sceneY = useTransform(scrollYProgress, [0.40, 0.52], [0, 620]);
 
-  // Sticky section wipes from left→right during card sweep
-  const stickyClipLeft = useTransform(scrollYProgress, [0.62, 0.74], ["0%", "110%"]);
+  // Sticky section wipes left→right, curved to follow the card's trailing edge
+  const stickyClipLeft = useTransform(
+    scrollYProgress,
+    [0.63, 0.66, 0.69, 0.72, 0.74],
+    ["0%", "20%", "45%", "80%", "110%"]
+  );
   const stickyClipPath = useTransform(stickyClipLeft, c => `inset(0 0 0 ${c})`);
 
-  // HeroSection fixed during [0.58, ~end of section], then unfixes seamlessly
-  const prevReveal = useRef(false);
-  useMotionValueEvent(rawProgress, "change", (latest) => {
-    const reveal = latest >= 0.58 && latest < 0.998;
-    if (reveal !== prevReveal.current) {
-      prevReveal.current = reveal;
-      onRevealChange?.(reveal);
-    }
-  });
-
   return (
-    <div ref={outerRef} style={{ height: "420vh", position: "relative" }}>
+    <div ref={outerRef} style={{ height: "450vh", position: "relative" }}>
     <motion.section style={{
       height: "100vh",
       position: "sticky",
@@ -717,8 +832,20 @@ export default function LandingSection({
         </motion.div>
       </div>
     </motion.section>
-    <SweepCard scrollYProgress={scrollYProgress} />
-    <SettledAce scrollYProgress={scrollYProgress} />
+    {/* Hero layer — sticky behind the landing animation, revealed by clipPath */}
+    {children && (
+      <div style={{
+        position: "sticky",
+        top: 0,
+        height: "100vh",
+        zIndex: 10,
+        overflow: "hidden",
+      }}>
+        {children}
+      </div>
+    )}
+    {!introPlaying && <SweepCard scrollYProgress={scrollYProgress} />}
+    {!introPlaying && <SettledAce scrollYProgress={scrollYProgress} hideSmallCard={hideSmallCard} />}
     </div>
   );
 }

@@ -118,7 +118,7 @@ h1, h2, h3, h4 {
 
 /* ─── Section Layout ──────────────────────────────────────────── */
 .section-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
@@ -126,6 +126,12 @@ h1, h2, h3, h4 {
 @media (min-width: 640px) {
   .section-container {
     padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1800px) {
+  .section-container {
+    max-width: 1600px;
   }
 }
 
@@ -256,3 +262,24 @@ h1, h2, h3, h4 {
 }
 
 .video-placeholder:hover { border-color: var(--gold); }
+
+/* ─── Testimonials Marquee ───────────────────────────────────── */
+.testimonials-wrapper {
+  cursor: none;
+}
+
+.testimonials-track {
+  width: max-content;
+  animation: marquee-scroll 40s linear infinite;
+}
+.testimonials-track.paused {
+  animation-play-state: paused;
+}
+.testimonials-track.dragging {
+  animation: none;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-25%); }
+}

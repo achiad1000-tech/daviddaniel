@@ -11,7 +11,7 @@ const navLinks = [
   { label: "צור קשר", href: "#contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ introPlaying = false }: { introPlaying?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -30,9 +30,9 @@ export default function Navbar() {
   return (
     <>
       <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: introPlaying ? 0 : 1 }}
+        transition={{ duration: 0.45, ease: "easeOut", delay: introPlaying ? 0 : 0.2 }}
         className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
         style={{
           background: scrolled
@@ -45,20 +45,42 @@ export default function Navbar() {
         <div className="section-container">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <a
+            <motion.a
               href="#"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex flex-col leading-none select-none"
+              className="flex flex-col leading-none select-none cursor-pointer"
+              style={{ textDecoration: "none", gap: "0.2rem" }}
+              initial={{ opacity: 0, scale: 0, filter: "blur(6px)" }}
+              animate={
+                introPlaying
+                  ? { opacity: 0, scale: 0, filter: "blur(6px)" }
+                  : { opacity: 1, scale: 1, filter: "blur(0px)" }
+              }
+              transition={{
+                opacity: { duration: 0.5, delay: 0.25 },
+                scale: { type: "spring", stiffness: 380, damping: 18, delay: 0.15 },
+                filter: { duration: 0.5, delay: 0.25 },
+              }}
             >
               <span
-                className="gold-gradient font-[family-name:var(--font-playfair)] italic text-lg md:text-xl font-semibold tracking-wide"
+                className="font-[family-name:var(--font-playfair)] italic font-semibold tracking-wide"
+                style={{
+                  fontSize: "1.125rem",
+                  background: "linear-gradient(135deg, #C9A84C, #E5C76B, #9A7B2E)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
               >
                 David Daniel
               </span>
-              <span className="text-[10px] tracking-[0.25em] text-[var(--text-muted)] uppercase">
+              <span
+                className="tracking-[0.25em] uppercase"
+                style={{ fontSize: "10px", color: "var(--text-muted)" }}
+              >
                 אמן חושים
               </span>
-            </a>
+            </motion.a>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-8">

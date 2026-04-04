@@ -1,27 +1,23 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 
 export default function HeroSection() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
   return (
     <section
-      ref={ref}
       id="hero"
       className="relative flex items-center overflow-hidden"
-      style={{ background: "var(--bg)", paddingTop: "150px", marginBottom: "4rem" }}
+      style={{
+        background: "var(--bg)",
+        paddingTop: "150px",
+        height: "100vh",
+      }}
     >
       {/* Background orbs */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: "radial-gradient(ellipse 80% 70% at 60% 40%, rgba(201,168,76,0.07) 0%, transparent 65%)",
-          y: bgY,
         }}
       />
       <motion.div
@@ -42,17 +38,8 @@ export default function HeroSection() {
         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%)",
-        }}
-      />
 
-      <motion.div
-        style={{ opacity }}
-        className="section-container relative z-10 w-full py-14 md:py-24 lg:py-28"
-      >
+      <div className="section-container relative z-10 w-full py-14 md:py-24 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
           {/* ── Right: Text ── */}
@@ -148,7 +135,7 @@ export default function HeroSection() {
           </motion.div>
 
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

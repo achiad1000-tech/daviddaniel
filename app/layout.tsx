@@ -53,6 +53,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl" className={`${heebo.variable} ${playfair.variable}`}>
       <body className="antialiased font-[family-name:var(--font-heebo)]">
+        <script dangerouslySetInnerHTML={{ __html: `window.history.scrollRestoration='manual';window.scrollTo(0,0);` }} />
         {children}
       </body>
     </html>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, type MotionValue } from "framer-motion";
+import { useRef, useCallback, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, useMotionValue, type MotionValue } from "framer-motion";
 
 const W = 160;
 const H = 220;
@@ -563,15 +563,17 @@ function CardFace({ value, suit, color }: { value: string; suit: string; color: 
 
 /* ─── Settled Card — spins & changes face on scroll ────────── */
 function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgress: MotionValue<number>; hideSmallCard?: boolean }) {
-  const x = useTransform(scrollYProgress, [0.74, 0.82], [200, 0]);
-  const aceOpacity = useTransform(scrollYProgress, [0.74, 0.75], [0, 1]);
+
 
   const [visible, setVisible] = useState(false);
   const hasSeenStart = useRef(false);
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    // Must see progress < 0.3 first (animation actually played from start)
     if (v < 0.3) hasSeenStart.current = true;
-    if (v >= 0.74 && hasSeenStart.current && !visible) setVisible(true);
+    if (v >= 0.74 && hasSeenStart.current) {
+      if (!visible) setVisible(true);
+    } else {
+      if (visible) setVisible(false);
+    }
   });
 
   // Use window scroll for spin after landing animation
@@ -579,6 +581,58 @@ function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgres
   const [cardIndex, setCardIndex] = useState(0);
 
   const rotateY = useTransform(scrollY, (v) => (v / 500) * 360);
+
+  // Entry: slide in from right as the big card exits (0.74→0.82)
+  const enterX = useTransform(scrollYProgress, [0.74, 0.82], [200, 0]);
+  const enterOpacity = useTransform(scrollYProgress, [0.74, 0.78], [0, 1]);
+
+  // Exit: wheel at page bottom with smooth lerp (feels like native scroll)
+  const exitMv = useMotionValue(0);
+  const exitTarget = useRef(0);
+  const exitCurrent = useRef(0);
+  const rafId = useRef(0);
+
+  useEffect(() => {
+    if (!visible) return;
+
+    const tick = () => {
+      const diff = exitTarget.current - exitCurrent.current;
+      if (Math.abs(diff) > 0.0005) {
+        exitCurrent.current += diff * 0.06;
+        exitMv.set(exitCurrent.current);
+        rafId.current = requestAnimationFrame(tick);
+      } else if (exitCurrent.current !== exitTarget.current) {
+        exitCurrent.current = exitTarget.current;
+        exitMv.set(exitCurrent.current);
+      }
+    };
+
+    const handler = (e: WheelEvent) => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const atBottom = window.scrollY >= maxScroll - 2;
+      if (atBottom && e.deltaY > 0) {
+        e.preventDefault();
+        exitTarget.current = Math.min(1, exitTarget.current + e.deltaY / 800);
+        cancelAnimationFrame(rafId.current);
+        rafId.current = requestAnimationFrame(tick);
+      } else if (e.deltaY < 0 && exitTarget.current > 0) {
+        e.preventDefault();
+        exitTarget.current = Math.max(0, exitTarget.current - Math.abs(e.deltaY) / 800);
+        cancelAnimationFrame(rafId.current);
+        rafId.current = requestAnimationFrame(tick);
+      }
+    };
+
+    window.addEventListener("wheel", handler, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handler);
+      cancelAnimationFrame(rafId.current);
+    };
+  }, [visible, exitMv]);
+
+  const cardX = useTransform(() => Math.max(enterX.get(), exitMv.get() * 200));
+  const cardOpacity = useTransform(() => Math.min(enterOpacity.get(), 1 - exitMv.get()));
+  const combinedRotateY = useTransform(() => rotateY.get() + exitMv.get() * 90);
 
   const prevHalf = useRef(0);
   useMotionValueEvent(scrollY, "change", (v) => {
@@ -599,8 +653,8 @@ function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgres
       position: "fixed",
       bottom: 40,
       right: 24,
-      x,
-      opacity: aceOpacity,
+      x: cardX,
+      opacity: cardOpacity,
       zIndex: 9999,
       pointerEvents: "none",
       width: W,
@@ -612,7 +666,7 @@ function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgres
         width: W, height: H,
         position: "relative",
         transformStyle: "preserve-3d",
-        rotateY,
+        rotateY: combinedRotateY,
       }}>
         <CardFace value={face.value} suit={face.suit} color={face.color} />
         {/* Back face */}

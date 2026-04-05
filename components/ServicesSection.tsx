@@ -137,9 +137,9 @@ export default function ServicesSection() {
   const rotates = [rotate0, undefined, rotate2];
 
   // Mobile: Cards spread vertically (top / center / bottom)
-  const mobileY0 = useTransform(sectionProgress, [0.15, 0.55], [0, -140]);
+  const mobileY0 = useTransform(sectionProgress, [0.15, 0.55], [0, -290]);
   const mobileY1 = useTransform(sectionProgress, [0.15, 0.55], [0, 0]);
-  const mobileY2 = useTransform(sectionProgress, [0.15, 0.55], [0, 140]);
+  const mobileY2 = useTransform(sectionProgress, [0.15, 0.55], [0, 290]);
   const mobileYs = [mobileY0, mobileY1, mobileY2];
 
   const mobileRotate0 = useTransform(sectionProgress, [0.15, 0.55], [4, 0]);
@@ -194,7 +194,7 @@ export default function ServicesSection() {
         {/* Mobile — stacked center, spread vertically on scroll */}
         <div
           className="relative md:hidden"
-          style={{ height: 520 }}
+          style={{ height: 880 }}
         >
           {services.map((service, i) => (
             <motion.div

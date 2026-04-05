@@ -49,7 +49,7 @@ export default function Home() {
         <VideoGallery />
         <Testimonials />
         <FAQ />
-        <ContactForm />
+        {isMobile && <ContactForm />}
       </main>
       <Footer />
     </>

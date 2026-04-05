@@ -13,9 +13,11 @@ import FAQ from "@/components/FAQ";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
 import LandingSection from "@/components/LandingSection";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Home() {
   const [introPlaying, setIntroPlaying] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,9 +37,13 @@ export default function Home() {
       </AnimatePresence>
       <Navbar introPlaying={introPlaying} />
       <main>
-        <LandingSection introPlaying={introPlaying}>
+        {isMobile ? (
           <HeroSection />
-        </LandingSection>
+        ) : (
+          <LandingSection introPlaying={introPlaying}>
+            <HeroSection />
+          </LandingSection>
+        )}
         <AboutSection />
         <ServicesSection />
         <VideoGallery />

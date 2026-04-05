@@ -123,18 +123,28 @@ export default function ServicesSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: sectionProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 85%", "start 20%"],
+    offset: ["start end", "end start"],
   });
 
-  // Cards spread — synced with section scroll
-  const left0 = useTransform(sectionProgress, [0.3, 0.7], ["50%", "17%"]);
-  const left1 = useTransform(sectionProgress, [0.3, 0.7], ["50%", "50%"]);
-  const left2 = useTransform(sectionProgress, [0.3, 0.7], ["50%", "83%"]);
+  // Desktop: Cards spread horizontally — slow, across full section scroll
+  const left0 = useTransform(sectionProgress, [0.15, 0.55], ["50%", "17%"]);
+  const left1 = useTransform(sectionProgress, [0.15, 0.55], ["50%", "50%"]);
+  const left2 = useTransform(sectionProgress, [0.15, 0.55], ["50%", "83%"]);
   const lefts = [left0, left1, left2];
 
-  const rotate0 = useTransform(sectionProgress, [0.3, 0.7], [-4, 0]);
-  const rotate2 = useTransform(sectionProgress, [0.3, 0.7], [4, 0]);
+  const rotate0 = useTransform(sectionProgress, [0.15, 0.55], [-4, 0]);
+  const rotate2 = useTransform(sectionProgress, [0.15, 0.55], [4, 0]);
   const rotates = [rotate0, undefined, rotate2];
+
+  // Mobile: Cards spread vertically (top / center / bottom)
+  const mobileY0 = useTransform(sectionProgress, [0.15, 0.55], [0, -140]);
+  const mobileY1 = useTransform(sectionProgress, [0.15, 0.55], [0, 0]);
+  const mobileY2 = useTransform(sectionProgress, [0.15, 0.55], [0, 140]);
+  const mobileYs = [mobileY0, mobileY1, mobileY2];
+
+  const mobileRotate0 = useTransform(sectionProgress, [0.15, 0.55], [4, 0]);
+  const mobileRotate2 = useTransform(sectionProgress, [0.15, 0.55], [-4, 0]);
+  const mobileRotates = [mobileRotate0, undefined, mobileRotate2];
 
   return (
     <section
@@ -146,14 +156,14 @@ export default function ServicesSection() {
       <div className="section-container">
         {/* Header — chars reveal synced with cards */}
         <div className="text-center mb-14">
-          <div><CharReveal text="מה אני מציע" className="section-label" progress={sectionProgress} startAt={0} endAt={0.2} /></div>
+          <div><CharReveal text="מה אני מציע" className="section-label" progress={sectionProgress} startAt={0} endAt={0.15} /></div>
           <h2 className="mt-2 text-3xl md:text-4xl lg:text-5xl font-black">
-            <CharReveal text="הופעות לכל " progress={sectionProgress} startAt={0.05} endAt={0.3} />
-            <CharReveal text="אירוע" className="gold-gradient" progress={sectionProgress} startAt={0.15} endAt={0.35} />
+            <CharReveal text="הופעות לכל " progress={sectionProgress} startAt={0.05} endAt={0.25} />
+            <CharReveal text="אירוע" className="gold-gradient" progress={sectionProgress} startAt={0.12} endAt={0.3} />
           </h2>
           <div className="gold-divider mt-4" />
           <div className="mt-4">
-            <CharReveal text="כל הופעה מותאמת אישית לאופי ולמטרות האירוע שלך." className="text-[var(--text-muted)] max-w-xl mx-auto text-base md:text-lg" progress={sectionProgress} startAt={0.15} endAt={0.4} />
+            <CharReveal text="כל הופעה מותאמת אישית לאופי ולמטרות האירוע שלך." className="text-[var(--text-muted)] max-w-xl mx-auto text-base md:text-lg" progress={sectionProgress} startAt={0.1} endAt={0.35} />
           </div>
         </div>
 
@@ -181,12 +191,28 @@ export default function ServicesSection() {
           ))}
         </div>
 
-        {/* Mobile — normal stack */}
-        <div className="flex flex-col gap-6 md:hidden">
-          {services.map((service) => (
-            <div key={service.title}>
+        {/* Mobile — stacked center, spread vertically on scroll */}
+        <div
+          className="relative md:hidden"
+          style={{ height: 520 }}
+        >
+          {services.map((service, i) => (
+            <motion.div
+              key={service.title}
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                x: "-50%",
+                y: mobileYs[i],
+                marginTop: "-90px",
+                width: "min(85%, 340px)",
+                rotate: mobileRotates[i],
+                zIndex: i === 1 ? 3 : i === 0 ? 2 : 1,
+              }}
+            >
               <ServiceCard service={service} />
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -41,7 +41,8 @@ function GalleryThumb({
         alt={img.alt}
         width={1600}
         height={2000}
-        quality={90}
+        quality={100}
+        unoptimized
         className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
       />
       <motion.div

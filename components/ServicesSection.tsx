@@ -215,6 +215,19 @@ export default function ServicesSection() {
             </motion.div>
           ))}
         </div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6 }}
+          className="flex justify-center mt-10"
+        >
+          <a href="#contact" className="btn-primary inline-flex">
+            אשמח לקבל הצעת מחיר
+          </a>
+        </motion.div>
       </div>
     </section>
   );

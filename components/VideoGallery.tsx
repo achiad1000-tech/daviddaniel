@@ -5,13 +5,68 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 const images = [
-  { src: "/gallery-1.jpg", alt: "הופעת חושים" },
-  { src: "/gallery-2.jpg", alt: "הופעת חושים" },
-  { src: "/gallery-3.jpg", alt: "הופעת חושים" },
-  { src: "/gallery-4.jpg", alt: "הופעת חושים" },
-  { src: "/gallery-5.jpg", alt: "הופעת חושים" },
-  { src: "/gallery-6.jpg", alt: "הופעת חושים" },
+  { src: "/gallery-1.jpg", alt: "הופעת חושים" },   // 0 — left top
+  { src: "/gallery-2.jpg", alt: "הופעת חושים" },   // 1 — left bottom
+  { src: "/gallery-7.jpg", alt: "הופעת חושים" },   // 2 — center top
+  { src: "/gallery-8.jpg", alt: "הופעת חושים" },   // 3 — center mid left
+  { src: "/gallery-10.jpg", alt: "הופעת חושים" },  // 4 — center mid right
+  { src: "/gallery-9.jpg", alt: "הופעת חושים" },   // 5 — center bottom
+  { src: "/gallery-4.jpg", alt: "הופעת חושים" },   // 6 — right top
+  { src: "/gallery-5.jpg", alt: "הופעת חושים" },   // 7 — right bottom
 ];
+
+function GalleryThumb({
+  img,
+  idx,
+  onClick,
+}: {
+  img: (typeof images)[0];
+  idx: number;
+  onClick: (i: number) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.1 }}
+      transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="relative overflow-hidden rounded-xl cursor-pointer group"
+      style={{ border: "1px solid var(--border)" }}
+      onClick={() => onClick(idx)}
+    >
+      <Image
+        src={img.src}
+        alt={img.alt}
+        width={1600}
+        height={2000}
+        quality={100}
+        unoptimized
+        className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
+      />
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ duration: 0.25 }}
+        style={{ background: "rgba(0,0,0,0.4)" }}
+      >
+        <motion.div
+          className="w-12 h-12 rounded-full flex items-center justify-center"
+          initial={{ scale: 0.7, opacity: 0 }}
+          whileHover={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          style={{ background: "rgba(201,168,76,0.2)", border: "1px solid var(--gold)" }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export default function VideoGallery() {
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -55,52 +110,31 @@ export default function VideoGallery() {
           </motion.p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
-          {images.map((img, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.94, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.1 }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative overflow-hidden rounded-xl cursor-pointer group"
-              style={{
-                aspectRatio: "4/3",
-                border: "1px solid var(--border)",
-              }}
-              onClick={() => setLightbox(i)}
-            >
-              <Image
-                src={img.src}
-                alt={img.alt}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              {/* Hover overlay */}
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.25 }}
-                style={{ background: "rgba(0,0,0,0.4)" }}
-              >
-                <motion.div
-                  className="w-14 h-14 rounded-full flex items-center justify-center"
-                  initial={{ scale: 0.7, opacity: 0 }}
-                  whileHover={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  style={{ background: "rgba(201,168,76,0.2)", border: "1px solid var(--gold)" }}
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2">
-                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                  </svg>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          ))}
+        {/* Custom Layout */}
+        <div className="flex gap-3 lg:gap-4 items-start">
+
+          {/* Left column */}
+          <div className="flex flex-col gap-3 lg:gap-4" style={{ width: "17%" }}>
+            <GalleryThumb img={images[0]} idx={0} onClick={setLightbox} />
+            <GalleryThumb img={images[1]} idx={1} onClick={setLightbox} />
+          </div>
+
+          {/* Center column */}
+          <div className="flex flex-col gap-3 lg:gap-4 flex-1">
+            <GalleryThumb img={images[2]} idx={2} onClick={setLightbox} />
+            <div className="flex gap-3 lg:gap-4">
+              <div className="flex-1"><GalleryThumb img={images[3]} idx={3} onClick={setLightbox} /></div>
+              <div className="flex-1"><GalleryThumb img={images[4]} idx={4} onClick={setLightbox} /></div>
+            </div>
+            <GalleryThumb img={images[5]} idx={5} onClick={setLightbox} />
+          </div>
+
+          {/* Right column */}
+          <div className="flex flex-col gap-3 lg:gap-4" style={{ width: "17%" }}>
+            <GalleryThumb img={images[6]} idx={6} onClick={setLightbox} />
+            <GalleryThumb img={images[7]} idx={7} onClick={setLightbox} />
+          </div>
+
         </div>
       </div>
 

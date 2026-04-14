@@ -81,7 +81,7 @@ export default function ContactForm() {
 
               {/* WhatsApp */}
               <a
-                href="https://wa.me/972505552598?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%93%D7%95%D7%93%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%9C%D7%92%D7%91%D7%99%20%D7%94%D7%9E%D7%95%D7%A4%D7%A2%20%D7%A9%D7%9C%D7%9A"
+                href="https://wa.me/972505552598?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%94%D7%9E%D7%95%D7%A4%D7%A2%20%D7%A9%D7%9C%20%D7%93%D7%95%D7%93"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-[var(--text-muted)] text-sm hover:text-[var(--gold)] transition-colors"

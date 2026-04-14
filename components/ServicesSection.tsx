@@ -222,7 +222,7 @@ export default function ServicesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6 }}
-          className="flex justify-center mt-10"
+          className="flex justify-center mt-24 md:mt-10"
         >
           <a href="#contact" className="btn-primary inline-flex">
             אשמח לקבל הצעת מחיר

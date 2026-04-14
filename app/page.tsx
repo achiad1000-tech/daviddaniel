@@ -11,13 +11,13 @@ import VideoGallery from "@/components/VideoGallery";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import ContactForm from "@/components/ContactForm";
+import ContactModal from "@/components/ContactModal";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import Footer from "@/components/Footer";
-import LandingSection from "@/components/LandingSection";
-import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Home() {
   const [introPlaying, setIntroPlaying] = useState(true);
-  const isMobile = useIsMobile();
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,21 +35,17 @@ export default function Home() {
           <IntroScreen key="intro" onComplete={() => setIntroPlaying(false)} />
         )}
       </AnimatePresence>
-      <Navbar introPlaying={introPlaying} />
+      <Navbar introPlaying={introPlaying} onOpenModal={() => setModalOpen(true)} />
+      <ContactModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <WhatsAppButton />
       <main>
-        {isMobile ? (
-          <HeroSection />
-        ) : (
-          <LandingSection introPlaying={introPlaying}>
-            <HeroSection />
-          </LandingSection>
-        )}
+        <HeroSection />
         <AboutSection />
         <ServicesSection />
         <VideoGallery />
         <Testimonials />
-        <FAQ />
-        {isMobile && <ContactForm />}
+        <FAQ onOpenModal={() => setModalOpen(true)} />
+        <ContactForm />
       </main>
       <Footer />
     </>

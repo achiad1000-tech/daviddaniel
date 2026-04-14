@@ -11,7 +11,7 @@ const navLinks = [
   { label: "צור קשר", href: "#contact" },
 ];
 
-export default function Navbar({ introPlaying = false }: { introPlaying?: boolean }) {
+export default function Navbar({ introPlaying = false, onOpenModal }: { introPlaying?: boolean; onOpenModal?: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -97,9 +97,9 @@ export default function Navbar({ introPlaying = false }: { introPlaying?: boolea
 
             {/* CTA + Mobile Menu */}
             <div className="flex items-center gap-3">
-              <a href="#contact" className="btn-primary text-sm py-2 px-5 hidden sm:inline-flex">
+              <button onClick={onOpenModal} className="btn-primary text-sm py-2 px-5 hidden sm:inline-flex">
                 הזמן הופעה
-              </a>
+              </button>
 
               {/* Hamburger */}
               <button
@@ -145,9 +145,9 @@ export default function Navbar({ introPlaying = false }: { introPlaying?: boolea
                   {link.label}
                 </button>
               ))}
-              <a href="#contact" className="btn-primary mt-4 text-base text-center" onClick={() => setMenuOpen(false)}>
+              <button className="btn-primary mt-4 text-base text-center" onClick={() => { setMenuOpen(false); onOpenModal?.(); }}>
                 הזמן הופעה
-              </a>
+              </button>
             </div>
           </motion.div>
         )}

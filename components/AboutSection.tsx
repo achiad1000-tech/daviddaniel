@@ -1,68 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 
 function TextReveal({ children, className }: { children: string; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 85%", "end 40%"],
-  });
-
-  const words = children.split(" ");
-
-  return (
-    <div ref={ref} className={className}>
-      {words.map((word, i) => {
-        const start = i / words.length;
-        const end = (i + 1) / words.length;
-        return <Word key={i} word={word} range={[start, end]} progress={scrollYProgress} />;
-      })}
-    </div>
-  );
-}
-
-function Word({
-  word,
-  range,
-  progress,
-}: {
-  word: string;
-  range: [number, number];
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
-}) {
-  const opacity = useTransform(progress, range, [0.15, 1]);
-  return (
-    <motion.span style={{ opacity, transition: "opacity 0.1s" }}>
-      {word}{" "}
-    </motion.span>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 function ScrollReveal({
   children,
-  offset = 0,
   className,
 }: {
   children: React.ReactNode;
   offset?: number;
   className?: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 90%", "start 60%"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [24 + offset * 6, 0]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-  return (
-    <motion.div ref={ref} style={{ y, opacity }} className={className}>
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 export default function AboutSection() {
@@ -123,7 +75,7 @@ export default function AboutSection() {
             <div className="gold-divider gold-divider-right" />
 
             <TextReveal className="text-[var(--text-muted)] text-base md:text-lg leading-relaxed">
-              תתכוננו לחוויה שלא ראיתם קודם. 45 דקות של צחוק, הפתעה, רגעים בלתי נשכחים והרבה איך הוא עשה את זה?! דוד דניאל משלב אומנות חושים מתקדמת, קריאת מחשבות, השפעה על תת־המודע והומור חד שמרים את כל הקהל.
+              תתכוננו לחוויה שלא ראיתם קודם. 40 דקות של צחוק, הפתעה, רגעים בלתי נשכחים והרבה איך הוא עשה את זה?! דוד דניאל משלב אומנות חושים מתקדמת, קריאת מחשבות, השפעה על תת־המודע והומור חד שמרים את כל הקהל.
             </TextReveal>
 
             <TextReveal className="text-[var(--text-muted)] text-base leading-relaxed">

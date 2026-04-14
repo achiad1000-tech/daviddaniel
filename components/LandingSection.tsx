@@ -562,7 +562,7 @@ function CardFace({ value, suit, color }: { value: string; suit: string; color: 
 }
 
 /* ─── Settled Card — spins & changes face on scroll ────────── */
-function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgress: MotionValue<number>; hideSmallCard?: boolean }) {
+function SettledAce({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
 
 
   const [visible, setVisible] = useState(false);
@@ -646,7 +646,7 @@ function SettledAce({ scrollYProgress, hideSmallCard = false }: { scrollYProgres
 
   const face = CARD_FACES[cardIndex];
 
-  if (!visible || hideSmallCard) return null;
+  if (!visible) return null;
 
   return (
     <motion.div style={{
@@ -757,11 +757,9 @@ function CardBox3D({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
 export default function LandingSection({
   introPlaying = false,
   children,
-  hideSmallCard = false,
 }: {
   introPlaying?: boolean;
   children?: React.ReactNode;
-  hideSmallCard?: boolean;
 }) {
   const [textVisible, setTextVisible] = useState(false);
   const outerRef = useRef<HTMLDivElement>(null);
@@ -899,7 +897,6 @@ export default function LandingSection({
       </div>
     )}
     {!introPlaying && <SweepCard scrollYProgress={scrollYProgress} />}
-    {!introPlaying && <SettledAce scrollYProgress={scrollYProgress} hideSmallCard={hideSmallCard} />}
     </div>
   );
 }

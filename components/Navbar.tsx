@@ -145,9 +145,6 @@ export default function Navbar({ introPlaying = false, onOpenModal }: { introPla
                   {link.label}
                 </button>
               ))}
-              <button className="btn-primary mt-4 text-base text-center" onClick={() => { setMenuOpen(false); onOpenModal?.(); }}>
-                הזמן הופעה
-              </button>
             </div>
           </motion.div>
         )}
